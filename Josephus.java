@@ -86,19 +86,5 @@ public static void josephus(int[] n,int m){
         }
     }
 
-
-
-
-    }��号，出列的人赋值为-1
-                if (flag < m && n[i] != -1){
-                    flag++;
-                }else if (flag == m && n[i] != -1){
-                    System.out.print(n[i]+" ");
-                    n[i] = -1;
-                    flag = 1;
-                    kill++;
-                }
-            }
-
-        }
+ 
     }
