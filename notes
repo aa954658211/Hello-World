@@ -1,0 +1,431 @@
+KMP算法：为什么p[k]!=p[j]时候需要求k=next[k],因为此时p[j+1]前面的k后缀都已经不适合做对比了（前缀和后缀不相同了），需要重新计算p[j+1]的k值
+如果p[k]=p[j]那么可以更新p[j+1]=p[k]+1,kmp利用已遍历过的信息减少遍历的次数
+2^32个地址可以访问2^32字节的数据，也即是4GB的数据，因为一个地址可以访问一个字节的数据
+网关类似于路由器，负责转发路由，通常填的也是路由器的地址
+
+递归就完事了，全都是递归，集合（数组）跟普通的对象分开
+MetaObject设置对象的值得相关信息，借助于objectWrapper来完成（metaclass借助于reflector完成），ObjectFactory主要是生成对象
+MetaClass设置对象的类的相关信息
+Reflector也是反射的相关信息，都保存最初的那个对象信息，object
+
+springsecurity SecurityBuilder<O>，建造者模式，用来建造对象的（DefaultSecurityFilterChain,AuthenticationManager） SecurityConfigurer<O,B extends SecurityBuilder<O>>,顾名思义就是用来配置builder的
+	一个builder有多个configurer，并且执行init和configure方法后执行build（）
+和一定时，差越小，积越大
+x+y=k,k为定值，求xy的最大值
+不妨设f(x)=xy=x(k-x)=-x²+kx=-（x-k/2)²+(k²/4)
+故可知若x,y∈R，则当x=y=k/2,最大值f(x)max=k²/4
+
+advisor才是springaop中aspect切分成具体的每一个切面，一个advisor只包含一种通知
+
+MethodInvocation实现了jointpoint，代表方法的调用，类似于servlet里面的FilterChain
+MethodInterceptor实现了advice，代表增强器或者拦截器，类似于servlet里面的filter
+
+AbstarctAopAutoCreator将每个bean都遍历寻找每个advisor
+
+二进制补码已经不一致，一个8位，一个32位怎么能一致啊
+
+常量池如果不存在，则存放一个堆中string对象的引用
+
+新生代GC（minorGC）
+老年代GC(MajorGC/FullGC)
+netty:channel读取到消息通过pieline流动，pieline调用channelHandleContext
+	fireChannelxxx()是pieline的流动事件
+	ChannelHandleContext:invokeChannelxxx()分为静态和实例方法
+
+同步io：在一个功能调用时，没有得到结果就会一直等待,总有一个部分是被阻塞的
+异步io：和同步io相反，调用之后会立即返回，并通过回调、通知等通知调用者
+阻塞io：就是在io执行的两个阶段（等待数据和拷贝数据的两个阶段）
+	阻塞：数据没来，啥都不做，直到数据来了
+非阻塞io：等待数据阶段都不等待
+	需要不停的轮训recv
+	拷贝数据阶段无论如何都是需要等待的
+
+
+设计状态
+	dp[i]=从0-i的最低花费，可以从前一个楼梯爬一个过来，也可以从前两个楼梯爬两个过来，爬一个楼
+
+梯的最低花费，爬两个楼梯的最低花费
+	
+状态转移方程
+	dp[i]=min（dp[i-1],dp[i-2]）+ai
+	
+	10 10 30
+初始化dp
+	dp[0]=a0=1,dp[1]=min(dp[0],dp[1])=1,dp2=min（dp[0],dp[1]）+a2=2	     
+
+
+
+
+回溯最简单的例子
+ public static List<String> generateParenthesis(int n){
+        List<String> list = new ArrayList<>();
+        addList(list,"(",1,n*2);
+        return list;
+    }
+
+    /**
+     *
+     * @param list 总的结果
+     * @param temp 生成的临时状态
+     * @param x 递归次数
+     * @param n 总的形成括号对数
+     */
+    public static void addList(List<String> list,String temp,int x,int n){
+        x++;
+        if (x<=n){
+            addList(list,temp+"(",x,n);
+            addList(list,temp+")",x,n);
+        }else{
+            char[] chars = temp.toCharArray();
+            int flag = 0;
+            for (int i = 0; i < chars.length; i++) {
+                if (flag<0 || flag>n) continue;
+                if (chars[i]=='('){
+                    flag++;
+                }else
+                    flag--;
+            }
+            if (flag == 0 ){
+                list.add(temp);
+            }
+        }
+    }
+
+ //给出所有可能的数字组合
+    public static List<List<Integer>> readBinaryWatch(int[] n){
+        List<List<Integer>> list = new ArrayList<>();
+        addList(list,new ArrayList<Integer>(),n);
+        return list;
+    }
+    
+    public static void addList(List<List<Integer>> list,List<Integer> temp,int[] n){
+        if (temp.size()< n.length){//可能的数字组合
+            for (int i = 0; i < n.length; i++) {
+                if (temp.contains(n[i])){
+                    continue;
+                }else {
+                    temp.add(n[i]);
+                    addList(list,temp,n);//一直递归一直递归，直到添加了3个数字进去
+                    temp.remove(temp.size()-1);//将最后一个移除走,回溯到之前的未添加的最后一个数字的状态
+                }
+            }
+        }else{
+            list.add(new ArrayList<>(temp));
+        }
+    }
+
+读取二进制手表
+
+static int[] bins = new int[]{1, 2, 4, 8, 16, 32};
+
+    public static List<String> readBinaryWatch(int turnedOn) {
+        List<String> result = new ArrayList<>();
+        backtrack(result, 0, 10, turnedOn, 0, 0, 0);
+        return result;
+    }
+
+    public static void backtrack(List<String> result, int start, int total, int turnedOn, int h, int m, int currentTurnedOn) {
+        //递归结束条件
+        if (turnedOn == currentTurnedOn) {
+            if (h >= 12 || m >= 60) {
+                return;
+            }
+            String format = String.format("%2d:%02d", h, m);
+            result.add(format);
+        } else {
+            for (int i = start; i < total; i++) {
+                if (i < 6) {
+                    m += bins[i];
+                    //递归
+                    backtrack(result, i+ 1, total, turnedOn, h, m, currentTurnedOn + 1);
+                    //消除条件，回溯
+                    m -= bins[i];
+                } else {
+                    h += bins[i - 6];
+                    //递归
+                    backtrack(result, i+ 1, total, turnedOn, h, m, currentTurnedOn + 1);
+                    //消除条件，回溯
+                    h -= bins[i - 6];
+                }
+            }
+        }
+    }
+
+
+ public static void main(String[] args) throws Exception {
+        AnnotationMetadata annotationMetadata = new StandardAnnotationMetadata(Application.class);
+        Set<String> annotationTypes = annotationMetadata.getAnnotationTypes();
+        System.out.println("获取本类上的注解:"+annotationTypes);
+        Set<String> metaAnnotationTypes = annotationMetadata.getMetaAnnotationTypes(MapperScan.class.getName());
+        System.out.println("获取注解上的注解:"+metaAnnotationTypes);
+
+        System.out.println("类里面某个注解是否有被指定注解标注"+annotationMetadata.hasMetaAnnotation(SpringBootConfiguration.class.getName()));
+
+        Set<MethodMetadata> annotatedMethods = annotationMetadata.getAnnotatedMethods(Bean.class.getName());
+        System.out.println("类里面是否有方法标注了此注解:"+annotatedMethods);
+    }
+
+resourceloader主要获取resource和classloader
+
+整体流程或者结构式怎么样的？
+核心部分是什么？
+怎么实现的？
+
+
+一个tomcat实例就是一个server，一个server包含多个service，也就是多个应用程序，每个service包含多个connector
+和一个container，一个container又包含多个子容器，engine、host、context、wrapper
+springboot中的tomcatwebserver实际上就是用来启动tomcat的，tomcat是它的一个成员对象
+
+
+
+1 2 3 4 5 
+双指针，一个头指针，一个尾指针，当两个指针相遇时结束循环
+重新排列，相当于将尾指针插入到头指针
+将这个链表砍一半，然后将后一半链表反转过来，最后再一个一个的插入，两个指针相遇时就是一半、
+快慢指针找中间链表节点，快指针
+建造者模式，和工厂模式比较类似，但是建造者模式一般都是用来创建复杂对象，例如对象属性比较多的，容易搞混属性的对象
+创建的对象的属性可能不一样
+
+为什么jdk动态代理一定要是接口才可以用，因为生成的子类是extend了proxy然后再implement接口，所以只能是接口可用
+思维固化了，以为代理一定要有一个实现类，其实可以不需要实现类也可以
+
+isAccessAllowed 返回True表明已经登录
+shiro中的拦截器，主要是filter,里面的doFilter(),然后执行的是doFilterInternal(),再然后是,preHandler，类似拦截器的机制
+
+
+
+本类调用和trycatch都不会由事务来处理
+
+
+Eureka
+	Eureka是一个服务注册与发现的框架，有负载均衡（ribbon）和网关，熔断器（Hystrix），智能路由（zuul）
+	Eureka包括两个组件，有Eureka client和Eureka server
+	Eureka server提供服务注册服务、保存所有可用服务节点的信息
+	Eureka client是一个java客户端，用于简化交互，客户端之间可以进行通讯
+
+
+
+设计状态
+	f(x)=从0-x乘积最大的连续子数组的乘积
+	h(x)=从0-x乘积最小的连续子数组的乘积
+	有后效性，如果当前数为负数的最大乘积，当前数为正数的最大乘积,两面性
+状态转移
+	f(x)=max(f(x-1)*x,x)
+	h(x)=max(f(x),f(x-1))
+状态初始化
+	f(1) = a[1];f(2)=max(f(1)*a[2],a[2]);
+
+-2 3 -2
+
+1 2 3 4 5 6 7
+
+
+一个用户对应多个群组，一个群组对应多个用户，是一种多对多的关系，
+一个群组对应一个管理员，一个管理员对应多个群组，是一种一对多的关系
+管理员分为超级管理员，一级管理员，二级管理员
+对应的权限分别是：所有、自己包括由自己创建的、自己
+
+
+pa-c3 pa-null pa -b1 pa-b2
+pb-c2 pb -c3 pb-null pb-a1
+七大软件设计原则
+开闭原则，对扩展开放，对修改关闭
+任何基类可以出现的地方，子类一定可以出现
+状态转移方程得好好想想该怎么做
+dp[i]代表从0-（i-1）是否能被空格拆分成一个或多个，只要枚举从0-（i-1）就能知道是否dp【i】是否被拆分
+
+发布与订阅模式，消息中间件
+不同业务不同机器，是分布式、相同业务不同机器，是集群、即机器做的事情是否相同
+为什么转一个弯就转不过来呢
+
+
+想法接近，可惜没实现（已经实现）
+最小连接数，连接池保存的最小数据库连接，一直保持
+最大连接数，连接池能申请的最大连接数，超过此数将进入队列排队
+数据库连接池刚开始是从最小连接数中返回数据库连接，数量不够再向数据库申请
+
+URL，统一资源定位符，表示用地址来定位一个网络上的资源
+URI，统一资源标识符，表示用地址或者编号等等其他东西来唯一标识一个资源，其中URI 包括URL
+
+	user
+	zuul
+config 	microserviceA microserviceB hystrix(套娃套娃套娃)
+
+
+递归查找菜单
+	菜单查找入口，从id=0开始找到最开始父菜单
+	然后递归查询父菜单id对应的子菜单，一直递归
+
+
+可以解决问题
+设计状态
+	f(x)从0-x的无重复字符最长子串的子串序列
+	dp表示所有f(x)中最长的长度
+	需要保存一个遇到重复字符
+状态转移方程
+	f(x) = max(f(x-1)+1,1),遇到重复字符重新计算，怎么确定重新开始的位置
+	dp = max(dp(i-1),f(x))，从第一个重复字符的下一个字符开始
+状态初始化
+	f(0) = 1
+	dp(0) = 1
+
+如果没有头绪就从0开始，一个个的数
+
+分治算法，划分简单且均匀分布，就是每一个子问题都是均匀分布的，只有一个小问题那么不能判断
+二分法是分治算法的一种简单实现，二分法要求一个单调序列（递增）
+
+递归：函数的作用是什么、函数基础的结束条件是什么
+
+1 2 4 8
+3次8-1=7，6024
+
+
+l1,l2,如果l1.val<=l2.val，那么就将问题分解成l1.next.val和l2.val
+
+ 1
+2 3
+
+
+
+
+看到最短想到的是广度优先搜索
+
+
+奇偶指针
+1 2 3 4 5 
+1 3 5 2 4
+p.next = q.next;
+q.next = p.next.next;
+p = p.next
+q = q.next;
+
+1->3->5
+
+2->4->null
+
+ 
+lo  start
+5    4    3    2    1
+
+lo      start
+4    5    3    2    1
+
+4    3    5    2    1
+
+
+
+微服务等于一个基座加N个子模块
+网关、服务保护、负载均衡、分布式配置中心、服务熔断
+
+
+更新多个文档时讲update函数的第四个参数打开即可，选择true则代表你要全都更新，否则不更新，只更新一条数据。
+写入安全机制，应答式写入，acknowledge write和非应答式写入unacknowledge write
+根据方法帮助我们推断出sql，有这么强大吗
+ensureIndex（{key:1}）创建索引在mongoDB上,1代表升序，-1代表降序
+
+sql中         mongoDB中
+where         $match（加条件查询）
+group by      $group（分组）
+having        $match
+select        $project（代表选择哪一列数据）
+order by      $sort
+limit	      $limit
+sum()         $sum ($sum:1,按照1递增，有一个增加一个)
+count()       $sum
+join          $lookup
+
+
+配置数据源之后，还要绑定mysql，通过sqlsessionfactory
+
+多数据源配置的时候主要分为三步
+1.在properties文件配置两个数据源，对应得属性要配置好
+2.利用注解配置两个数据源，注入两个数据源到容器中
+3.分别配置两个数据源，其中要配置sqlsessionfactorybean和sqlsessionTemplate(用来操作session，也就是操作我们的sql语句，其中底层由executor来完成)
+其中，id这些不要搞乱
+
+
+1011
+1100
+0001
+
+
+方法引用通过方法的名字来指向一个方法。
+方法引用可以使语言的构造更紧凑简洁，减少冗余代码。使用一对::
+构造器引用，语法是Class:new
+方法引用就代表的是左边是instance::method，或者Class::method这是静态方法引用
+filter(过滤一些数据)->sort(排序)->map(将原数据映射为新的数据)->collect(聚合成新的集合或者列表),在stream流在管道中经过中间操作（intermediate operation）处理，
+最后由最终操作（terminal operation）得到前面处理的结果s
+
+简单函数
+CASE [col_name] WHEN [value1] THEN [result1]…ELSE [default] END
+搜索函数
+CASE WHEN [expr] THEN [result1]…ELSE [default] END
+
+iterator开始时位于第一个元素之前
+
+
+行转列，超好
+先从后过滤掉空格，再从后循环
+{"fcserverName":"Test002","domain":"10.10.10.10","domainIp":"10.10.10.10","description":"Windows平台",
+	"isMaster":"0","isUserMaster":"1","factoryArea":"龙华","port":"7480"
+}
+
+
+@results()相当于resultmap，@result就是result，@one就是association，关联查询
+@many相当于一对多
+List<UserInfo> users = userInfoService.lambdaQuery()
+			.like(UserInfo::getUserName,"ha")
+			.lt(UserInfo::getAge,40)
+			.list();这种方法可以直接查询
+自定义方法中传递一个page对象即可自动分页、配置pageInterceptor这是一个分页拦截器
+
+76页
+
+被用作map或者set的映射元素
+getclass（）与 instanceof比较equals，arraylist扩容变成原来的1.5倍
+if(minCapacity - elementData.length>0)(数组在第一次的时候就会被赋值，只有当元素个数超过数组个数才扩容)
+	grow(minCapacity);(minCapacity相当于当前元素个数加1，因为是size+1来的
+负数的原码是符号位为1,其他位跟正数一样，反码是除符号位取反，补码是反码加1
+r=a-(a/b)*b -2-(-2/12)*12=-2 -(-1*12)=10,这个是负数取模的算法，一般是向下取整
+x=-2的n次方*xn+xn-1*2的n-1次方
+
+f(i)全部赋值为1了
+
+爬楼梯数为3的时候：有两种选择，先爬1级，剩下2级，先爬2级，剩下1级
+爬楼梯数为4的时候：有两种选择，先爬1级，剩下3级，先爬2级，剩下2级
+所以每次都可以解释为f(n)=f(n-1)+f(n-2)
+大问题的最优解可以由小问题的最优解推出，最优子结构性质、无后效性
+将一个问题拆分成几个小问题，分别求解这些小问题，即可推出大问题的解，这种称为动态规划（DP）
+DP三连，我是谁？我从哪里来？我要到哪里去？
+
+
+
+设计接口，定义类型，还可以设计一个抽象的骨架实现类（abstractInterface）
+匿名内部类没有名字，访问不到静态变量，所以不能有静态变量，也不能有变量
+
+
+泛型通配符? extends 和? super 其实根本上还是左边的泛型在起作用，例如List<? extends Number>可以接收
+List<Integer>的值代表这个集合可以接收另一个集合，集合里的数据还是相同的，但是可以由不同集合接收
+容器与容器之间没有继承关系，？ super T 是T的基类（等级最低），？extends T是 T的基类（等级最高）
+？ super T 可以存进去T的子类，因为限制T和T的基类，那么T的子类一定可以存进去（意思这是存放T的基类的容器，既然是T的父类，那么存放T的子类也一定是T的父类的子类）
+跟直接写object一样，可以存放子类
+List<? super Integer> list = new ArrayList<>();
+        List<Number> objects = new ArrayList<>();
+        objects.add(new Double(2.5));
+        Double number = (Double) objects.get(0);
+        list = objects;
+
+
+（1）实例化Bean
+（2）设置属性值
+（3）调用BeanNameAware的setBeanName（）方法
+（4）调用BeanFactoryAware的setBeanFactory（）方法
+（5）调用ApplicationContextAware的setApplicationContext()方法
+（6）调用BeanPostProcessor的预初始化方法
+（7）调用InitializingBean的afterPropertiesSet（）方法
+（8）调用定制的初始化方法
+（9）调用BeanPostProcessor的后初始化方法
+（10）【Singleton】spring缓存池中准备就绪的Bean
+（11）调用DisposableBean的destroy（）方法、调用destroy-method属性配置的方法
+
+        
